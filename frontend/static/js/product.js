@@ -309,4 +309,14 @@ function getSiteClass(website) {
 }
 function renderMarkdown(text) { return text.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>'); }
 function escHtml(str) { if (str==null) return 'N/A'; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function escAttr(str) { if (str==null) return ''; return String(str).replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function escAttr(str) {
+  // value goes inside onclick="fn('...')": escape for the JS string first, then for the HTML attribute
+  if (str == null) return '';
+  return String(str)
+    .replace(/\\/g,'\\\\').replace(/'/g,"\\'")
+    .replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function safeUrl(url) {
+  // only allow http(s) links in href attributes
+  return (typeof url === 'string' && /^https?:\/\//i.test(url)) ? escHtml(url) : '#';
+}
